@@ -1,5 +1,8 @@
 import { auth } from './firebase';
-import { requestPaymentEmail } from '../email'
+
+import { requestPaymentEmail } from './email'
+
+
 
 
 
