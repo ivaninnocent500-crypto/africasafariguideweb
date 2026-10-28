@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sand: #faf8f4;
+  --color-card: #ffffff;
+  --color-ink: #14202e;
+  --color-navy: #0e1f36;
+  --color-muted: #5b6673;
+  --color-line: #e4e0d8;
+  --color-teal: #00796b;
+  --color-teal-soft: #e0f2ee;
+  --color-amber: #f2a33a;
+  --color-whatsapp: #1b7f3b;
+  /* aliases used by existing pages: primary actions = Teal, text on them = white */
+  --color-gold: #00796b;
+  --color-gold-ink: #ffffff;
+  --color-gold-soft: #e0f2ee;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+:root { color-scheme: light; }
+body { @apply bg-sand text-ink antialiased; }
+
+html { scroll-padding-top: 5rem; -webkit-text-size-adjust: 100%; }
+body { overflow-x: clip; }
+:focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

@@ -1,0 +1,37 @@
+import { auth } from '../firebase'
+import { requestPaymentEmail } from '../email'
+
+export interface PaymentRequest {
+  applicationId: string; amount: number; currency: 'USD'
+  description: string; customerEmail: string; customerName: string
+}
+export type PaymentOutcome =
+  | { kind: 'instructions_by_email' }
+  | { kind: 'redirect'; url: string }
+
+export interface PaymentProvider { id: 'manual' | 'dodo'; start(req: PaymentRequest): Promise<PaymentOutcome> }
+
+/** No online charge: the traveller is emailed payment instructions. */
+const manual: PaymentProvider = {
+  id: 'manual',
+  start: async req => { void requestPaymentEmail(req.applicationId); return { kind: 'instructions_by_email' } },
+}
+
+/** Only the application id is sent. The server works out the price, so the browser cannot change it. */
+const dodo: PaymentProvider = {
+  id: 'dodo',
+  async start(req) {
+    const token = await auth.currentUser?.getIdToken()
+    const res = await fetch(`${import.meta.env.VITE_PAYMENTS_API ?? ''}/api/payments/dodo/checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ applicationId: req.applicationId }),
+    })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok || !body.url) throw new Error(body.error ?? 'Payment could not be started')
+    return { kind: 'redirect', url: body.url as string }
+  },
+}
+
+export const getPaymentProvider = (): PaymentProvider =>
+  import.meta.env.VITE_PAYMENT_PROVIDER === 'dodo' ? dodo : manual
