@@ -5,6 +5,7 @@ import RequireAuth from './features/auth/RequireAuth'
 import SiteHeader from './components/SiteHeader'
 import SiteFooter from './components/SiteFooter'
 import IntelligencePage from './features/intelligence/IntelligencePage'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const DestinationPage = lazy(() => import('./features/intelligence/DestinationPage'))
 const LivePage = lazy(() => import('./features/live/LivePage'))
@@ -48,38 +49,43 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const { pathname } = useLocation()
+
   return (
     <AuthProvider>
       <ScrollToTop />
       <SiteHeader />
-      <Suspense fallback={<Fallback />}>
-        <Routes>
-          <Route path="/" element={<IntelligencePage />} />
-          <Route path="/destinations/:id" element={<DestinationPage />} />
-          <Route path="/live" element={<LivePage />} />
-          <Route path="/live/:id" element={<LiveDetailPage />} />
-          <Route path="/journeys" element={<JourneysPage />} />
-          <Route path="/journeys/:id" element={<JourneyDetailPage />} />
-          <Route path="/experiences/:id" element={<ExperienceDetailPage />} />
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/profile" element={guard(<ProfilePage />)} />
-          <Route path="/visa" element={<VisaHomePage />} />
-          <Route path="/visa/:countryId" element={<VisaEligibilityPage />} />
-          <Route path="/visa/apply/:countryId" element={guard(<ApplyPage />)} />
-          <Route path="/visa/apply/group/:groupId" element={guard(<ApplyPage />)} />
-          <Route path="/visa/applications" element={guard(<MyApplicationsPage />)} />
-          <Route path="/visa/applications/:id" element={guard(<ApplicationPage />)} />
-          <Route path="/visa/applications/:id/details" element={guard(<EditDetailsPage />)} />
-          <Route path="/visa/applications/:id/documents" element={guard(<DocumentsPage />)} />
-          <Route path="/visa/applications/:id/review" element={guard(<ReviewPage />)} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/refunds" element={<Refunds />} />
-          <Route path="/delete-account" element={<DeleteInfo />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+      <ErrorBoundary key={pathname}>
+        <Suspense fallback={<Fallback />}>
+          <Routes>
+            <Route path="/" element={<IntelligencePage />} />
+            <Route path="/destinations/:id" element={<DestinationPage />} />
+            <Route path="/live" element={<LivePage />} />
+            <Route path="/live/:id" element={<LiveDetailPage />} />
+            <Route path="/journeys" element={<JourneysPage />} />
+            <Route path="/journeys/:id" element={<JourneyDetailPage />} />
+            <Route path="/experiences/:id" element={<ExperienceDetailPage />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/profile" element={guard(<ProfilePage />)} />
+            <Route path="/visa" element={<VisaHomePage />} />
+            <Route path="/visa/:countryId" element={<VisaEligibilityPage />} />
+            <Route path="/visa/apply/:countryId" element={guard(<ApplyPage />)} />
+            <Route path="/visa/apply/group/:groupId" element={guard(<ApplyPage />)} />
+            <Route path="/visa/applications" element={guard(<MyApplicationsPage />)} />
+            <Route path="/visa/applications/:id" element={guard(<ApplicationPage />)} />
+            <Route path="/visa/applications/:id/details" element={guard(<EditDetailsPage />)} />
+            <Route path="/visa/applications/:id/documents" element={guard(<DocumentsPage />)} />
+            <Route path="/visa/applications/:id/review" element={guard(<ReviewPage />)} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/refunds" element={<Refunds />} />
+            <Route path="/delete-account" element={<DeleteInfo />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </ErrorBoundary>
       <SiteFooter />
     </AuthProvider>
   )
 }
+
